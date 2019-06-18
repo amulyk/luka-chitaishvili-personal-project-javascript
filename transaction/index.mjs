@@ -1,10 +1,10 @@
- class Transaction {
+ export class Transaction {
     constructor() {
-        this.log = [];
+        this.logs = [];
         this.store = {};
     }
             //Method for validation
-    validateScenario(scenario) {
+    verifyScenario(scenario) {
         if (!Array.isArray(scenario)) {
             throw new TypeError(`'scenario' must be an array`)
         }
@@ -32,69 +32,53 @@
     }
 
     async dispatch(scenario) {
-        this.validateScenario(scenario);
+        this.verifyScenario(scenario);
 
                 //Sorting array items by index property
         scenario.sort((first, second) => {
             return first.index > second.index ? 1 : -1;
         });
 
+        let numSteps = 0;
         for (let step of scenario) {
+            let storeBefore = {...this.store};
+            let log = {
+                    index: step.index,
+                    meta: { 
+                        title: step.meta.title,
+                        description: step.meta.description 
+                    } 
+                };
+            
             try {
-                
-            } catch(err) {
-                
+                await step.call(this.store);
+                log.storeBefore = storeBefore;
+                log.storeAfter = {...this.store};
+                log.error = null;
+            } catch (err) {
+                log.error = { 
+                        name: err.name,
+                        message: err.message,
+                        stack: err.stack, 
+                };
+                this.logs.push(log);
+                this.store = null;
+
+                for (let i = numSteps; i > 0; i--) {
+                    if (typeof scenario[i-1].restore === 'function') {
+                        try {
+                            await scenario[i-1].restore();
+                        } catch(err) {
+                            throw err;
+                        }
+                    } else {
+                        continue;
+                    }
+                }
+                break;
             }
+            this.logs.push(log);
+            numSteps++;
         }
     }
 }
-
-const scenario = [
-    {
-        index: '2',
-        meta: {
-            title: 'Read popular customers',
-            description: 'This action is responsible for reading the most popular customers'
-        },
-				// callback for main execution
-        call: async (store) => {},
-				// callback for rollback
-        restore: async () => {}
-    },
-    {
-        index: 4,
-        meta: {
-            title: 'Read popular customers',
-            description: 'This action is responsible for reading the most popular customers'
-        },
-				// callback for main execution
-        call: async (store) => {},
-				// callback for rollback
-        restore: async () => {}
-    },
-    {
-        index: 1,
-        meta: {
-            title: 'Read popular customers',
-            description: 'This action is responsible for reading the most popular customers'
-        },
-				// callback for main execution
-        call: async (store) => {},
-				// callback for rollback
-        restore: async () => {}
-    }
-];
-
-const transaction = new Transaction();
-
-(async() => {
-    try {
-			await transaction.dispatch(scenario);
-			const store = transaction.store; // {} | null
-			const logs = transaction.logs; // []
-    } catch (err) {
-            // Send email about broken transaction
-            console.log(err.message);
-    }
-})();
-
