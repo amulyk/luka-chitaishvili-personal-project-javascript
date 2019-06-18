@@ -14,7 +14,7 @@ const scenario = [
       },
       // callback for rollback
       restore: async () => { console.log('Restore from index 1');
-      }
+      },
   },
   {
       index: 2,
@@ -42,7 +42,7 @@ const scenario = [
           throw new Error('Error from index 3');
       },
       // callback for rollback
-      restore: async () => {}
+      restore: async () => {},
   }
 ];
 
