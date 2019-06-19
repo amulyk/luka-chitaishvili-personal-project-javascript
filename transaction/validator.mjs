@@ -4,7 +4,7 @@ export class Validator {
         let result = true;
 
         if (!Object.getOwnPropertyNames(data).every(property => Object.getOwnPropertyNames(schema).includes(property))) {
-            throw new Error('Invalid property name in scenario')
+            throw new Error(`Invalid property name found in scenario`)
         }
 
         for (let key of keys) {
@@ -22,11 +22,11 @@ export class Validator {
                 }
             } else if (data.hasOwnProperty(key)) {
                 if (!(typeof data[key] === schema[key]['type'])) {
-                    throw new Error(`Invalid property type in scenario`)
+                    throw new Error(`Invalid '${key}' property type in scenario`)
                 }
             } else if (!data.hasOwnProperty(key)) {
                 if (!schema[key]['optional']) {
-                    throw new Error(`Missing property in scenario`)
+                    throw new Error(`Missing '${key}' property in scenario`)
                 }
             } 
         }

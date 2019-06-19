@@ -43,7 +43,7 @@
         for (let step of scenario) {
  
             if (step.index < 0) {
-                throw new Error('Invalid step index in scenario')
+                throw new Error(`index: ${step.index}; Invalid step index in scenario`)
             }
             if (!Validator.validate(step, this.schema)) {
                 return false;
@@ -53,11 +53,7 @@
     }
 
     async dispatch(scenario) {
-        let isValid = this.verifyItems(scenario);
-        if (!isValid) {
-            throw new Error('Problem with scenario');
-        }
-        
+        this.verifyItems(scenario);
         scenario.sort((first, second) => {
             return first.index > second.index ? 1 : -1;
         });

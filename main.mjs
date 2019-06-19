@@ -19,7 +19,8 @@ const scenario = [
       },
   },
   {
-      index: -2,
+      index: 2,
+      index2sad: 2,
       meta: {
           title: 'Read popular customers',
           description: 'This action is responsible for reading the most popular customers'
