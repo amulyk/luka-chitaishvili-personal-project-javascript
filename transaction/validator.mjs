@@ -25,6 +25,5 @@ export class Validator {
                 }
             } 
         }
-        return true;
     }
 }

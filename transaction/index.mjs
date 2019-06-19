@@ -42,13 +42,11 @@
         }
 
         for (let step of scenario) {
- 
             if (step.index < 0) {
                 throw new Error(`index: ${step.index} --- invalid step index in scenario`)
             }
             Validator.validate(step, this.schema);
         }
-        return true;
     }
 
     async dispatch(scenario) {
