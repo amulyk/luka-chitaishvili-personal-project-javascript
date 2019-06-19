@@ -13,6 +13,13 @@ export class Validator {
                 if (!result) {
                     break;
                 }
+            } else if (Array.isArray(data[key])) {
+                for (let item of data[key]) {
+                    result = Validator.validate(item, schema[key][0]);
+                    if (!result) {
+                        break;
+                    }
+                }
             } else if (data.hasOwnProperty(key)) {
                 if (!(typeof data[key] === schema[key]['type'])) {
                     result = false;
@@ -31,26 +38,4 @@ export class Validator {
         }
         return result;
     }
-}
-
-let data = {
-    name: 'Roma',
-    age: 2,
-    index: 1
-}
-
-let schema = {
-    name: {
-        type: 'string',
-        optional: false
-    },
-    age: {
-        type: 'number',
-        optional: false
-    },
-    index: {
-        type: 'number',
-        optional: true
-    }
-
 }
