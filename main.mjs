@@ -42,7 +42,6 @@ const scenario = [
           throw new Error('Error from index 3');
       },
       // callback for rollback
-      restore: async () => {},
   }
 ];
 
@@ -57,5 +56,6 @@ const transaction = new Transaction();
           console.log(logs);
   } catch (err) {
           // Send email about broken transaction
+          console.log(err);
   }
 })();

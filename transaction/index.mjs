@@ -4,15 +4,65 @@
     constructor() {
         this.logs = [];
         this.store = {};
+        this.schema = {
+            index: {
+                type: 'number',
+                optional: false
+            },
+            meta: {
+                title: {
+                    type: 'string',
+                    optional: false
+                },
+                description: {
+                    type: 'string',
+                    optional: false
+                }
+            },
+            call: {
+                type: 'function',
+                optional: false
+            },
+            restore: {
+                type: 'function',
+                optional: true
+            },
+            silent: {
+                type: 'boolean',
+                optional: true
+            },
+        }
+    }
+
+    verifyItems(scenario) {
+        let lastItem = scenario[scenario.length - 1];
+
+        if (lastItem.hasOwnProperty('restore')) {
+            return false;
+        }
+        for (let step of scenario) {
+ 
+            if (step.index < 0) {
+                return false;
+            }
+            if (!Validator.validate(step, this.schema)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     async dispatch(scenario) {
-        let numSteps = 0;
-
+        let isValid = this.verifyItems(scenario);
+        if (!isValid) {
+            throw new Error('Problem with scenario')
+        }
+        
         scenario.sort((first, second) => {
             return first.index > second.index ? 1 : -1;
         });
 
+        let numSteps = 0;
         for (let step of scenario) {
             let silent = false;
             if (step.hasOwnProperty('silent')) {
