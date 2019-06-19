@@ -1,4 +1,4 @@
- import { Validator } from '../validator/index'
+ import { Validator } from './validator'
  
  export class Transaction {
     constructor() {
@@ -38,12 +38,12 @@
         let lastItem = scenario[scenario.length - 1];
 
         if (lastItem.hasOwnProperty('restore')) {
-            return false;
+            throw new Error('last step in scenario does not need restore')
         }
         for (let step of scenario) {
  
             if (step.index < 0) {
-                return false;
+                throw new Error('Invalid step index in scenario')
             }
             if (!Validator.validate(step, this.schema)) {
                 return false;
@@ -55,7 +55,7 @@
     async dispatch(scenario) {
         let isValid = this.verifyItems(scenario);
         if (!isValid) {
-            throw new Error('Problem with scenario')
+            throw new Error('Problem with scenario');
         }
         
         scenario.sort((first, second) => {
@@ -100,8 +100,6 @@
                             } catch(err) {
                                 throw err;
                             }
-                        } else {
-                            continue;
                         }
                     }
                     break;
