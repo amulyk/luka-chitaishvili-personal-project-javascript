@@ -20,7 +20,6 @@ const scenario = [
   },
   {
       index: 2,
-      index2sad: 2,
       meta: {
           title: 'Read popular customers',
           description: 'This action is responsible for reading the most popular customers'
@@ -43,7 +42,7 @@ const scenario = [
       call: async (store) => {
           store.component = 1;
           throw new Error('Error from index 3');
-      },
+      }
       // callback for rollback
   }
 ];

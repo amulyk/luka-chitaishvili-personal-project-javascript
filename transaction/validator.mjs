@@ -1,35 +1,30 @@
 export class Validator {
     static validate(data, schema) {
         let keys = Object.getOwnPropertyNames(schema);
-        let result = true;
+        let dataKeys = Object.getOwnPropertyNames(data);
+        let invalidProperties = dataKeys.filter(property => !keys.includes(property));
 
-        if (!Object.getOwnPropertyNames(data).every(property => Object.getOwnPropertyNames(schema).includes(property))) {
-            throw new Error(`Invalid property name found in scenario`)
+        if (invalidProperties.length) {
+            throw new Error(`${invalidProperties} --- invalid properties found in scenario`)
         }
 
         for (let key of keys) {
             if (typeof data[key] === 'object' && !Array.isArray(data[key])) {
-                result = Validator.validate(data[key], schema[key]);
-                if (!result) {
-                    break;
-                }
+                Validator.validate(data[key], schema[key]);
             } else if (Array.isArray(data[key])) {
                 for (let item of data[key]) {
-                    result = Validator.validate(item, schema[key][0]);
-                    if (!result) {
-                        break;
-                    }
+                    Validator.validate(item, schema[key][0]);
                 }
             } else if (data.hasOwnProperty(key)) {
                 if (!(typeof data[key] === schema[key]['type'])) {
-                    throw new Error(`Invalid '${key}' property type in scenario`)
+                    throw new Error(`invalid '${key}' property type in scenario`)
                 }
             } else if (!data.hasOwnProperty(key)) {
                 if (!schema[key]['optional']) {
-                    throw new Error(`Missing '${key}' property in scenario`)
+                    throw new Error(`missing '${key}' property in scenario`)
                 }
             } 
         }
-        return result;
+        return true;
     }
 }

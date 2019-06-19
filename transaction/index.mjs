@@ -38,16 +38,15 @@
         let lastItem = scenario[scenario.length - 1];
 
         if (lastItem.hasOwnProperty('restore')) {
-            throw new Error('last step in scenario does not need restore')
+            throw new Error('last step in scenario does not need restore function')
         }
+
         for (let step of scenario) {
  
             if (step.index < 0) {
-                throw new Error(`index: ${step.index}; Invalid step index in scenario`)
+                throw new Error(`index: ${step.index} --- invalid step index in scenario`)
             }
-            if (!Validator.validate(step, this.schema)) {
-                return false;
-            }
+            Validator.validate(step, this.schema);
         }
         return true;
     }
